@@ -25,7 +25,7 @@ const createNewProject = async (req, res) => {
 //---- Obtiene un proyecto ----
 const getProject = async (req, res) => {
   const { id } = req.params;
-
+  console.log(id);
   const project = await Project.findById(id);
 
   if (!project) {
@@ -37,10 +37,6 @@ const getProject = async (req, res) => {
     const error = new Error("Accion no valida");
     return res.status(404).json({ msg: error.message });
   }
-
-  //Obtener las tareas del proyecto
-  const tasks = await Task.find().where("project").equals(project._id);
-  res.json({ project, tasks });
 
   res.json(project);
 };
