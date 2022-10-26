@@ -25,7 +25,6 @@ const createNewProject = async (req, res) => {
 //---- Obtiene un proyecto ----
 const getProject = async (req, res) => {
   const { id } = req.params;
-  console.log(id);
   const project = await Project.findById(id);
 
   if (!project) {
