@@ -25,7 +25,14 @@ const createNewProject = async (req, res) => {
 //---- Obtiene un proyecto ----
 const getProject = async (req, res) => {
   const { id } = req.params;
-  const project = await Project.findById(id);
+  let project;
+
+  if (id.length === 12 || id.length === 24) {
+    project = await Project.findById(id);
+  } else {
+    const error = new Error("Project not found for indvalid id");
+    return res.status(404).json({ msg: error.message });
+  }
 
   if (!project) {
     const error = new Error("Project not found");
