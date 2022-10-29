@@ -44,7 +44,9 @@ const logIn = async (req, res) => {
   //Comprobar si el usuario existe
   const user = await User.findOne({ email });
   if (!user) {
-    const error = new Error("The user doesn't exist.");
+    const error = new Error(
+      "The user doesn't exist or the credentials are incorrect."
+    );
     return res.status(404).json({ msg: error.message });
   }
 
@@ -63,7 +65,9 @@ const logIn = async (req, res) => {
       token: generateJWT(user._id)
     });
   } else {
-    const error = new Error("El password es incorrecto");
+    const error = new Error(
+      "The user doesn't exist or the credentials are incorrect."
+    );
     return res.status(403).json({ msg: error.message });
   }
 };
