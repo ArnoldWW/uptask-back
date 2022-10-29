@@ -12,7 +12,7 @@ const projectSchema = mongoose.Schema(
       trim: true,
       required: true
     },
-    delivery: {
+    finishDate: {
       type: Date,
       default: Date.now()
     },
