@@ -3,13 +3,31 @@ import Task from "../models/Task.js";
 
 //---- Obtiene todos los proyectos ----
 const getProjects = async (req, res) => {
-  const projects = await Project.find().where("creator").equals(req.user);
+  try {
+    const projects = await Project.find().where("creator").equals(req.user);
 
-  res.json(projects);
+    res.json(projects);
+  } catch (error) {
+    return res.status(400).json({ msg: "Error getting projects." });
+  }
 };
 
 //---- Crea un proyecto ----
 const createNewProject = async (req, res) => {
+  //validar por nombre del proyecto
+  const projectByName = await Project.findOne(
+    { name: req.body.name },
+    "name _id"
+  );
+
+  if (
+    projectByName?.name.toLowerCase() === req.body.name.toLowerCase().trim()
+  ) {
+    const error = new Error("You already haveproject with the same name");
+    return res.status(404).json({ msg: error.message });
+  }
+
+  //instanciar el proyecto
   const project = new Project(req.body);
   project.creator = req.user._id;
 
@@ -18,13 +36,7 @@ const createNewProject = async (req, res) => {
 
     res.json(projectCreated);
   } catch (error) {
-    if (error.message.indexOf("name_1 dup key") !== -1) {
-      return res
-        .status(403)
-        .json({ msg: "You already have a project with the same name." });
-    } else {
-      return res.status(400).json({ msg: "Error creating project." });
-    }
+    return res.status(400).json({ msg: "Error creating project." });
   }
 };
 
@@ -34,19 +46,18 @@ const getProject = async (req, res) => {
   let project;
 
   if (id.length === 12 || id.length === 24) {
-    project = await Project.findById(id);
+    try {
+      project = await Project.findById(id);
+    } catch (error) {
+      return res.status(404).json({ msg: "Project not found." });
+    }
   } else {
     const error = new Error("Project not found for indvalid id");
     return res.status(404).json({ msg: error.message });
   }
 
-  if (!project) {
-    const error = new Error("Project not found");
-    return res.status(404).json({ msg: error.message });
-  }
-
   if (project.creator.toString() !== req.user._id.toString()) {
-    const error = new Error("Accion no valida");
+    const error = new Error("invalid action");
     return res.status(404).json({ msg: error.message });
   }
 
