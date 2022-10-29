@@ -5,7 +5,8 @@ const projectSchema = mongoose.Schema(
     name: {
       type: String,
       trim: true,
-      required: true
+      required: true,
+      unique: true
     },
     description: {
       type: String,
@@ -36,6 +37,5 @@ const projectSchema = mongoose.Schema(
     timestamps: true
   }
 );
-
 const Project = mongoose.model("Project", projectSchema);
 export default Project;

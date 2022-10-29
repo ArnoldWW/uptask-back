@@ -18,7 +18,13 @@ const createNewProject = async (req, res) => {
 
     res.json(projectCreated);
   } catch (error) {
-    console.log(error);
+    if (error.message.indexOf("name_1 dup key") !== -1) {
+      return res
+        .status(403)
+        .json({ msg: "You already have a project with the same name." });
+    } else {
+      return res.status(400).json({ msg: "Error creating project." });
+    }
   }
 };
 
