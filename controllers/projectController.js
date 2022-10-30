@@ -23,7 +23,7 @@ const createNewProject = async (req, res) => {
   if (
     projectByName?.name.toLowerCase() === req.body.name.toLowerCase().trim()
   ) {
-    const error = new Error("You already haveproject with the same name");
+    const error = new Error("You already have project with the same name");
     return res.status(404).json({ msg: error.message });
   }
 
@@ -40,25 +40,29 @@ const createNewProject = async (req, res) => {
   }
 };
 
-//---- Obtiene un proyecto ----
+//---- Obtener un proyecto ----
 const getProject = async (req, res) => {
   const { id } = req.params;
   let project;
 
-  if (id.length === 12 || id.length === 24) {
-    try {
-      project = await Project.findById(id);
-    } catch (error) {
-      return res.status(404).json({ msg: "Project not found." });
-    }
-  } else {
-    const error = new Error("Project not found for indvalid id");
-    return res.status(404).json({ msg: error.message });
+  if (id.length !== 24) {
+    return res.status(404).json({ msg: "Invalid id." });
+  }
+
+  try {
+    project = await Project.findById(id);
+  } catch (error) {
+    console.log(error);
+    return res.status(404).json({ msg: "Project not found." });
+  }
+
+  if (!project) {
+    return res.status(404).json({ msg: "Project not found." });
   }
 
   if (project.creator.toString() !== req.user._id.toString()) {
     const error = new Error("invalid action");
-    return res.status(404).json({ msg: error.message });
+    return res.status(403).json({ msg: error.message });
   }
 
   res.json(project);
