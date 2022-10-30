@@ -77,12 +77,12 @@ const updateProject = async (req, res) => {
   );
 
   if (!project) {
-    const error = new Error("Project not found");
+    const error = new Error("Project not found.");
     return res.status(404).json({ msg: error.message });
   }
 
   if (project.creator.toString() !== req.user._id.toString()) {
-    const error = new Error("Accion no valida");
+    const error = new Error("Invalid action.");
     return res.status(404).json({ msg: error.message });
   }
 
@@ -93,8 +93,8 @@ const updateProject = async (req, res) => {
   });
 
   try {
-    const projectUpdated = await project.save();
-    res.json(projectUpdated);
+    await project.save();
+    res.json({ msg: "Project updated successfully." });
   } catch (error) {
     console.log(error);
   }
@@ -107,18 +107,18 @@ const deleteProject = async (req, res) => {
   const project = await Project.findById(id);
 
   if (!project) {
-    const error = new Error("No encontrado");
+    const error = new Error("Project not found.");
     return res.status(404).json({ msg: error.message });
   }
 
   if (project.creator.toString() !== req.user._id.toString()) {
-    const error = new Error("Accion no valida");
+    const error = new Error("Invalid action.");
     return res.status(404).json({ msg: error.message });
   }
 
   try {
     await project.deleteOne();
-    res.json({ msg: "Proyecto eliminado" });
+    res.json({ msg: "Project deleted successfully" });
   } catch (error) {
     console.log(error);
   }
